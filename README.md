@@ -1,6 +1,6 @@
 # 🎮 Tetris Event Store - Game Engine with Constitutional Guarantees
 
-**Playable Tetris with settlement-grade event sourcing**
+## Playable Tetris with settlement-grade event sourcing
 
 Every move, rotation, and line clear becomes an auditable event with cryptographic hash chain verification. This proves the custom event store under realistic gaming workloads.
 
@@ -9,12 +9,14 @@ Every move, rotation, and line clear becomes an auditable event with cryptograph
 This is **Path 2** from our architecture critique - building a game engine to pressure-test the settlement-grade event store with real agent workloads.
 
 **Workload Match:**
+
 - 100 players × 10 turns/min × 5 events/turn = **30K events/day**
 - Perfect scale for our PostgreSQL-based event store
 - Every move = auditable event = perfect test case
 
 **Constitutional Mapping:**
-```
+
+```text
 Line clears = Revenue events
 Policy violations = Discount rejections  
 Game over = FINALIZED (unique index fires)
@@ -44,18 +46,19 @@ pip install fastapi uvicorn asyncpg
 python web/tetris_api.py
 ```
 
-### 3. Play!
+### 3. Play
 
-Open browser: **http://localhost:8001**
+Open browser: **[http://localhost:8001](http://localhost:8001)**
 
 **Controls:**
+
 - Arrow Keys: Move/Rotate
 - Space: Hard Drop
 - Z/X: Rotate
 
 ## 🏗️ Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                    Tetris Web UI (FastAPI)                   │
 │                                                              │
@@ -140,18 +143,21 @@ Just like the event store, every game execution has:
 ## 🎮 Game Policies (Revenue Policy Analog)
 
 ### Arcade Mode (Default)
+
 - Max 30 moves per piece
 - Max 5 consecutive rotations
 - Max 2 backtrack moves
 - Line clear fraud detection
 
 ### Casual Mode
+
 - Max 100 moves per piece
 - Max 20 consecutive rotations
 - Max 5 backtrack moves
 - Relaxed fraud thresholds
 
 ### Competitive Mode
+
 - Max 20 moves per piece
 - Max 3 consecutive rotations
 - **Zero** backtrack moves
@@ -162,13 +168,15 @@ Just like the event store, every game execution has:
 This game engine proves the event store works under realistic load:
 
 ### Expected Workload
-```
+
+```text
 100 players × 8 hours/day × 10 turns/minute = 48,000 turns/day
 Each turn = 3-10 events
 Total: 144,000 - 480,000 events/day
 ```
 
 ### Performance Targets
+
 - **Move latency**: < 50ms
 - **Concurrent players**: 100+
 - **Policy validation**: < 10ms
@@ -192,7 +200,7 @@ curl http://localhost:8001/api/game/{game_id}/verify
 
 ## 📁 Project Structure
 
-```
+```text
 tetris-event-store/
 ├── game/
 │   ├── tetris_engine.py           # Core game mechanics
@@ -212,22 +220,26 @@ tetris-event-store/
 ## 🎯 What This Proves
 
 ### 1. Event Store Performance ✅
+
 - Handles 30K-480K events/day easily
 - Sub-50ms append latency
 - No bottlenecks under gaming load
 
 ### 2. Policy Validation ✅
+
 - GamePolicyValidator = RevenuePolicyValidator
 - Line clears = Revenue approvals
 - Fraud detection works in real-time
 
 ### 3. Constitutional Guarantees ✅
+
 - Hash tampering immediately detected
 - FINALIZED constraint enforced
 - FSM transitions validated
 - Tenant isolation proven
 
 ### 4. Agent Integration ✅
+
 - ReAct loop with history
 - Tool validation before execution
 - Event sourcing for audit
@@ -236,7 +248,8 @@ tetris-event-store/
 
 ### Week 1 Extensions
 
-**1. AI Agent Players**
+#### 1. AI Agent Players
+
 ```python
 class TetrisAIAgent:
     async def plan_move(self, game_state, history):
@@ -245,7 +258,8 @@ class TetrisAIAgent:
         # Return best move
 ```
 
-**2. Drift Gate Integration**
+#### 2. Drift Gate Integration
+
 ```python
 # Compare AI behavior before/after model update
 result = gate_drift(
@@ -254,7 +268,8 @@ result = gate_drift(
 )
 ```
 
-**3. Multi-Player Mode**
+#### 3. Multi-Player Mode
+
 ```python
 # Battle mode with tenant isolation
 player1_execution = "game-p1-001"
@@ -262,7 +277,8 @@ player2_execution = "game-p2-001"
 # Advisory locks prevent cross-tenant issues
 ```
 
-**4. Analytics Dashboard**
+#### 4. Analytics Dashboard
+
 ```sql
 -- Query event store for insights
 SELECT 
@@ -312,18 +328,21 @@ def special_move(self, state):
 ## 📈 Metrics & Monitoring
 
 ### Game Metrics
+
 - Average score per player
 - Most common policy violations
 - Line clear frequency
 - Move patterns
 
 ### Event Store Metrics
+
 - Events per second
 - Append latency (p50, p95, p99)
 - Hash verification time
 - Lock contention
 
 ### Policy Violations
+
 - Most triggered policies
 - Fraud attempt frequency
 - Backtrack patterns
@@ -331,17 +350,20 @@ def special_move(self, state):
 ## 🚢 Deployment
 
 ### Local Development
+
 ```bash
 python web/tetris_api.py
 ```
 
 ### Docker
+
 ```bash
 docker build -t tetris-event-store .
 docker run -p 8001:8001 tetris-event-store
 ```
 
 ### Production (AWS)
+
 - Deploy alongside settlement-grade-event-store
 - Same RDS instance
 - Same ECS cluster
@@ -349,22 +371,26 @@ docker run -p 8001:8001 tetris-event-store
 
 ## 🎓 What We Learned
 
-**1. Event Store is Production-Ready**
+### 1. Event Store is Production-Ready
+
 - Handles realistic gaming workloads
 - No performance issues at 30K-480K events/day
 - Constitutional guarantees hold under load
 
-**2. Policy System Works**
+### 2. Policy System Works
+
 - GamePolicyValidator proves the pattern
 - Revenue policy validation will work identically
 - Fraud detection is real-time capable
 
-**3. Agent Pattern is Solid**
+### 3. Agent Pattern is Solid
+
 - ReAct loop with event history
 - Tool validation before execution
 - Clean separation of concerns
 
-**4. Audit Trail is Complete**
+### 4. Audit Trail is Complete
+
 - Every move traceable
 - Hash chain unbroken
 - Verification works end-to-end
@@ -372,6 +398,7 @@ docker run -p 8001:8001 tetris-event-store
 ## 🤝 Integration Points
 
 ### With MLOps RAG System
+
 ```python
 # Track model predictions as events
 await append_event_safe(
@@ -387,6 +414,7 @@ await append_event_safe(
 ```
 
 ### With Revenue Policy System
+
 ```python
 # Same pattern as GamePolicyValidator
 revenue_policy = RevenuePolicyValidator(tenant_id)
