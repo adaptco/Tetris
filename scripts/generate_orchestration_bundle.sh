@@ -1,20 +1,19 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/bin/bash
+set -e
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-OUTPUT_DIR="${1:-$ROOT_DIR/runtime/orchestration}"
-OBJECTIVE="${2:-End-to-end production software design and release for the agent runtime.}"
-BUILD_DIR="${BUILD_DIR:-$ROOT_DIR/build/orchestration}"
+# Get the absolute path of the repository root (one level up from this script)
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+BUILD_DIR="$REPO_ROOT/build/orchestration"
 
-"$ROOT_DIR/scripts/build_orchestration_agent.sh" "$BUILD_DIR"
+echo "Using Repository Root: $REPO_ROOT"
+echo "Target Build Directory: $BUILD_DIR"
 
-EXECUTABLE="$BUILD_DIR/orchestration_agent_cli"
-if [[ ! -x "$EXECUTABLE" && -x "$BUILD_DIR/Release/orchestration_agent_cli.exe" ]]; then
-  EXECUTABLE="$BUILD_DIR/Release/orchestration_agent_cli.exe"
-fi
+# Create build directory
+mkdir -p "$BUILD_DIR"
+cd "$BUILD_DIR"
 
-"$EXECUTABLE" \
-  --project-name "Tetris" \
-  --task-id "task-tetris-runtime" \
-  --objective "$OBJECTIVE" \
-  --output-dir "$OUTPUT_DIR"
+# Configure and Build
+cmake "$REPO_ROOT"
+make -j$(nproc)
+
+echo "Orchestration bundle generated successfully in $BUILD_DIR"
