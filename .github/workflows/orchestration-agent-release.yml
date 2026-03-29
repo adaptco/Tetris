@@ -1,0 +1,61 @@
+name: Orchestration Agent Release
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+    paths:
+      - "CMakeLists.txt"
+      - "orchestration/**"
+      - "agent_flow_tools/**"
+      - "orchestration_mcp_server.py"
+      - "scripts/**"
+      - "tests/test_orchestration_flow_registry.py"
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "CMakeLists.txt"
+      - "orchestration/**"
+      - "agent_flow_tools/**"
+      - "orchestration_mcp_server.py"
+      - "scripts/**"
+      - "tests/test_orchestration_flow_registry.py"
+
+jobs:
+  build-test-package:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt pytest
+
+      - name: Make runtime scripts executable
+        run: chmod +x scripts/*.sh
+
+      - name: Generate orchestration runtime bundle
+        run: ./scripts/generate_orchestration_bundle.sh
+
+      - name: Run C++ tests
+        run: ctest --test-dir build/orchestration --output-on-failure -C Release
+
+      - name: Run Python tests
+        run: python -m pytest tests/test_tetris_controls.py tests/test_orchestration_flow_registry.py
+
+      - name: Package runtime bundle
+        run: ./scripts/release_orchestration_bundle.sh "$GITHUB_WORKSPACE/dist/orchestration-bundle"
+
+      - name: Upload runtime artifact bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: orchestration-bundle
+          path: dist/orchestration-bundle

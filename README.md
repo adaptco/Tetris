@@ -66,6 +66,25 @@ This exposes the live game controls as MCP tools:
 - `advance_gravity`
 - `restart_tetris_game`
 
+## Orchestration Runtime
+
+This repo now also includes a production-oriented orchestration layer for agent workflows:
+
+- C++ runtime generator: `orchestration_agent_cli`
+- Python flow index library: `agent_flow_tools`
+- MCP server for the generated bundle: `orchestration_mcp_server.py`
+- Runtime scripts: `scripts/build_orchestration_agent.sh`, `scripts/generate_orchestration_bundle.sh`, `scripts/release_orchestration_bundle.sh`
+- GitHub packaging workflow: `.github/workflows/orchestration-agent-release.yml`
+
+The generated bundle lives in `runtime/orchestration` and describes four default sub-agents:
+
+- `architecture-agent`
+- `implementation-agent`
+- `qa-agent`
+- `release-agent`
+
+See [docs/orchestration_runtime.md](docs/orchestration_runtime.md) for the build, MCP, and GitHub artifact flow.
+
 ## 🏗️ Architecture
 
 ```text

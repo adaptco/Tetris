@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"C:/agents/Tetris/build/orchestration-ninja/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
