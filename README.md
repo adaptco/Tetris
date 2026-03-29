@@ -28,25 +28,14 @@ Move history = Hash chain verification
 ### 1. Prerequisites
 
 ```bash
-# Must have settlement-grade-event-store running
-cd ../settlement-grade-event-store
-docker-compose up -d postgres
-python scripts/init_db.py
-```
-
-### 2. Install & Run
-
-```bash
-cd tetris-event-store
-
 # Install dependencies
-pip install fastapi uvicorn asyncpg
+pip install -r requirements.txt
 
-# Start game server
-python web/tetris_api.py
+# Start the standalone web app
+python -m uvicorn web.tetris_api:app --host 127.0.0.1 --port 8001
 ```
 
-### 3. Play
+### 2. Play
 
 Open browser: **[http://localhost:8001](http://localhost:8001)**
 
@@ -55,6 +44,27 @@ Open browser: **[http://localhost:8001](http://localhost:8001)**
 - Arrow Keys: Move/Rotate
 - Space: Hard Drop
 - Z/X: Rotate
+
+### 3. Optional: expose controls over MCP
+
+Run the MCP server in a second terminal after the web app is up:
+
+```bash
+python tetris_mcp_server.py
+```
+
+This exposes the live game controls as MCP tools:
+
+- `start_tetris_game`
+- `get_tetris_state`
+- `move_left`
+- `move_right`
+- `soft_drop`
+- `rotate_clockwise`
+- `rotate_counterclockwise`
+- `hard_drop`
+- `advance_gravity`
+- `restart_tetris_game`
 
 ## 🏗️ Architecture
 

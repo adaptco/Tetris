@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Standalone Tetris</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <div class="canvas-frame">
+      <canvas id="game-canvas" width="960" height="640" aria-label="Standalone Tetris playfield"></canvas>
+    </div>
+    <div class="controls-row">
+      <button id="start-btn" type="button">Start Game</button>
+      <button id="restart-btn" type="button" disabled>Restart Run</button>
+    </div>
+  </main>
+  <script src="/static/app.js" defer></script>
+</body>
+</html>

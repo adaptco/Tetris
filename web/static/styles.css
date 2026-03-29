@@ -1,0 +1,104 @@
+:root {
+  --page-bg: #f3efe2;
+  --frame-bg: #151722;
+  --frame-edge: #d4662f;
+  --button-bg: #132642;
+  --button-ink: #f8f7f2;
+  --button-accent: #d4662f;
+  --button-disabled: #7f7b72;
+  --shadow: 0 20px 80px rgba(21, 23, 34, 0.24);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background:
+    radial-gradient(circle at top, rgba(212, 102, 47, 0.22), transparent 35%),
+    linear-gradient(180deg, #fbf8ee 0%, var(--page-bg) 100%);
+  color: #111827;
+  font-family: "Trebuchet MS", "Gill Sans", "Segoe UI", sans-serif;
+}
+
+body {
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.app-shell {
+  width: min(100%, 1100px);
+  display: grid;
+  gap: 16px;
+}
+
+.canvas-frame {
+  background: linear-gradient(160deg, #151722 0%, #101421 100%);
+  border: 3px solid var(--frame-edge);
+  border-radius: 28px;
+  padding: 16px;
+  box-shadow: var(--shadow);
+}
+
+#game-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 18px;
+  background: #11131a;
+}
+
+.controls-row {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+button {
+  border: 0;
+  border-radius: 999px;
+  padding: 14px 24px;
+  min-width: 170px;
+  background: var(--button-bg);
+  color: var(--button-ink);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 150ms ease, background 150ms ease, box-shadow 150ms ease;
+  box-shadow: 0 12px 32px rgba(19, 38, 66, 0.22);
+}
+
+button:hover:not(:disabled),
+button:focus-visible:not(:disabled) {
+  transform: translateY(-1px);
+  background: var(--button-accent);
+  outline: none;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  background: var(--button-disabled);
+  box-shadow: none;
+}
+
+@media (max-width: 720px) {
+  body {
+    padding: 12px;
+  }
+
+  .canvas-frame {
+    padding: 10px;
+    border-radius: 20px;
+  }
+
+  button {
+    width: 100%;
+  }
+}
