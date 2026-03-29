@@ -359,17 +359,33 @@ def special_move(self, state):
 
 ## 🚢 Deployment
 
+### Required Environment Variables
+
+`web/tetris_api.py` now reads database settings from environment variables at startup.
+The server will fail fast with a clear error if `DATABASE_URL` is missing or invalid.
+
+- `DATABASE_URL` (**required**) - PostgreSQL DSN used by `asyncpg`
+- `DB_POOL_SIZE` (optional, default: `10`) - max asyncpg pool size
+- `DB_SSL_MODE` (optional) - one of `disable`, `prefer`, `require`
+
 ### Local Development
 
 ```bash
+export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/event_store"
+export DB_POOL_SIZE="5"
+export DB_SSL_MODE="disable"
 python web/tetris_api.py
 ```
 
-### Docker
+### Docker / Dev Container
 
 ```bash
 docker build -t tetris-event-store .
-docker run -p 8001:8001 tetris-event-store
+docker run -p 8001:8001 \
+  -e DATABASE_URL="postgresql://postgres:postgres@host.docker.internal:5432/event_store" \
+  -e DB_POOL_SIZE="10" \
+  -e DB_SSL_MODE="prefer" \
+  tetris-event-store
 ```
 
 ### Production (AWS)
@@ -378,6 +394,14 @@ docker run -p 8001:8001 tetris-event-store
 - Same RDS instance
 - Same ECS cluster
 - Add load balancer for multiple instances
+
+Example production values:
+
+```bash
+export DATABASE_URL="postgresql://app_user:${DB_PASSWORD}@prod-rds.cluster-xxxx.us-east-1.rds.amazonaws.com:5432/event_store"
+export DB_POOL_SIZE="30"
+export DB_SSL_MODE="require"
+```
 
 ## 🎓 What We Learned
 
