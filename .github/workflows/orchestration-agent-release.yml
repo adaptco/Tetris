@@ -16,20 +16,23 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install Python dependencies
+      - name: Install Dependencies
         run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake build-essential
           python -m pip install --upgrade pip
           pip install pytest
 
-      - name: Make runtime scripts executable
-        run: chmod +x scripts/generate_orchestration_bundle.sh
-
-      - name: Generate orchestration runtime bundle
-        run: ./scripts/generate_orchestration_bundle.sh
+      - name: Configure and Build
+        run: |
+          mkdir -p build
+          cd build
+          cmake ..
+          make -j$(nproc)
 
       - name: Run C++ tests
         run: |
-          cd build/orchestration
+          cd build
           ctest --output-on-failure
 
       - name: Run Python tests
@@ -38,6 +41,7 @@ jobs:
       - name: Package runtime bundle
         run: |
           mkdir -p dist
+          # Ensure we are grabbing the binary from the correct build path
           tar -czvf dist/orchestration-agent.tar.gz -C build/orchestration orchestration_agent
 
       - name: Upload runtime artifact bundle
