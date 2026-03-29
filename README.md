@@ -83,7 +83,7 @@ The generated bundle lives in `runtime/orchestration` and describes four default
 - `qa-agent`
 - `release-agent`
 
-See [docs/orchestration_runtime.md](/C:/agents/Tetris/docs/orchestration_runtime.md) for the build, MCP, and GitHub artifact flow.
+See [docs/orchestration_runtime.md](docs/orchestration_runtime.md) for the build, MCP, and GitHub artifact flow.
 
 ## 🏗️ Architecture
 
