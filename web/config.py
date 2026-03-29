@@ -16,16 +16,13 @@ class Settings:
     db_ssl_mode: str | None = None
 
     @property
-    def asyncpg_ssl(self):
+    def asyncpg_ssl(self) -> bool | None:
         """Translate ssl mode to asyncpg `ssl` argument."""
-        if self.db_ssl_mode is None:
-            return None
         if self.db_ssl_mode == "disable":
             return False
-        if self.db_ssl_mode == "prefer":
-            return None
         if self.db_ssl_mode == "require":
             return True
+        # For "prefer" or if the mode is not set, asyncpg's `ssl` parameter should be `None`.
         return None
 
 
