@@ -51,7 +51,7 @@ class TetrisApiClient:
 
         req = request.Request(f"{self.base_url}{path}", data=body, headers=headers, method=method)
         try:
-            with request.urlopen(req) as response:
+            with request.urlopen(req, timeout=10) as response:
                 return json.loads(response.read().decode("utf-8"))
         except error.HTTPError as exc:
             detail = exc.read().decode("utf-8")

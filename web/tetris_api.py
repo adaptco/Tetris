@@ -7,6 +7,16 @@ from __future__ import annotations
 from pathlib import Path
 import sys
 from typing import Dict, List, Optional
+from web.config import load_settings
+=======
+from web.config import load_settings
+theirs
+
+=======
+from web.config import load_settings
+theirs
+
+=======
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
@@ -19,21 +29,10 @@ if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
 from game.tetris_engine import TetrisAction
-<<<<<<< ours
-<<<<<<< ours
-<<<<<<< ours
 from tetris_session_manager import TetrisSessionManager
-=======
-from web.config import load_settings
->>>>>>> theirs
-=======
-from web.config import load_settings
->>>>>>> theirs
 
-=======
-from web.config import load_settings
->>>>>>> theirs
 
+main
 BASE_DIR = Path(__file__).resolve().parent
 STATIC_DIR = BASE_DIR / "static"
 
@@ -98,8 +97,6 @@ async def root() -> FileResponse:
 async def health() -> Dict[str, str]:
     return {"status": "healthy", "service": "standalone-tetris"}
 
-<<<<<<< ours
-=======
 @app.on_event("startup")
 async def startup():
     """Initialize database connection"""
@@ -116,11 +113,6 @@ async def startup():
 
     # Initialize schema
     await initialize_schema(pool)
-<<<<<<< ours
-<<<<<<< ours
-=======
-=======
->>>>>>> theirs
 
     event_store = PostgresEventStore(pool)
     print(
@@ -128,14 +120,28 @@ async def startup():
         f"(pool={settings.db_pool_size}, ssl={settings.db_ssl_mode or 'default'})"
     )
 
->>>>>>> theirs
+theirs
 
     event_store = PostgresEventStore(pool)
     print(
         "🎮 Tetris Event Store started "
         f"(pool={settings.db_pool_size}, ssl={settings.db_ssl_mode or 'default'})"
     )
->>>>>>> theirs
+theirs
+
+@app.post("/api/game/start", response_model=GameStateResponse)
+async def start_game(request: StartGameRequest) -> Dict[str, object]:
+    return manager.start_game(player_id=request.player_id, seed=request.seed)
+
+
+@app.get("/api/game/{game_id}", response_model=GameStateResponse)
+async def get_game(game_id: str) -> Dict[str, object]:
+    try:
+        return manager.get_state(game_id)
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail="Game not found") from exc
+
+=======
 
 @app.post("/api/game/start", response_model=GameStateResponse)
 async def start_game(request: StartGameRequest) -> Dict[str, object]:
@@ -161,7 +167,14 @@ async def game_action(request: GameActionRequest) -> Dict[str, object]:
         return manager.apply_action(game_id=request.game_id, action_name=request.action)
     except KeyError as exc:
         raise HTTPException(status_code=404, detail="Game not found") from exc
+main
 
+@app.post("/api/game/action", response_model=GameStateResponse)
+async def game_action(request: GameActionRequest) -> Dict[str, object]:
+    try:
+        TetrisAction(request.action)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=f"Invalid action: {request.action}") from exc
 
 @app.post("/api/game/advance", response_model=GameStateResponse)
 async def advance_game(request: GameAdvanceRequest) -> Dict[str, object]:
