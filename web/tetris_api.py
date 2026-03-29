@@ -19,8 +19,20 @@ if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
 from game.tetris_engine import TetrisAction
+<<<<<<< ours
+<<<<<<< ours
+<<<<<<< ours
 from tetris_session_manager import TetrisSessionManager
+=======
+from web.config import load_settings
+>>>>>>> theirs
+=======
+from web.config import load_settings
+>>>>>>> theirs
 
+=======
+from web.config import load_settings
+>>>>>>> theirs
 
 BASE_DIR = Path(__file__).resolve().parent
 STATIC_DIR = BASE_DIR / "static"
@@ -86,6 +98,44 @@ async def root() -> FileResponse:
 async def health() -> Dict[str, str]:
     return {"status": "healthy", "service": "standalone-tetris"}
 
+<<<<<<< ours
+=======
+@app.on_event("startup")
+async def startup():
+    """Initialize database connection"""
+    global event_store
+
+    settings = load_settings()
+
+    pool = await asyncpg.create_pool(
+        dsn=settings.database_url,
+        min_size=1,
+        max_size=settings.db_pool_size,
+        ssl=settings.asyncpg_ssl,
+    )
+
+    # Initialize schema
+    await initialize_schema(pool)
+<<<<<<< ours
+<<<<<<< ours
+=======
+=======
+>>>>>>> theirs
+
+    event_store = PostgresEventStore(pool)
+    print(
+        "🎮 Tetris Event Store started "
+        f"(pool={settings.db_pool_size}, ssl={settings.db_ssl_mode or 'default'})"
+    )
+
+>>>>>>> theirs
+
+    event_store = PostgresEventStore(pool)
+    print(
+        "🎮 Tetris Event Store started "
+        f"(pool={settings.db_pool_size}, ssl={settings.db_ssl_mode or 'default'})"
+    )
+>>>>>>> theirs
 
 @app.post("/api/game/start", response_model=GameStateResponse)
 async def start_game(request: StartGameRequest) -> Dict[str, object]:

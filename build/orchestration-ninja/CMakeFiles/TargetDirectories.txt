@@ -1,0 +1,6 @@
+C:/agents/Tetris/build/orchestration-ninja/CMakeFiles/orchestration_agent_lib.dir
+C:/agents/Tetris/build/orchestration-ninja/CMakeFiles/orchestration_agent_cli.dir
+C:/agents/Tetris/build/orchestration-ninja/CMakeFiles/orchestration_agent_tests.dir
+C:/agents/Tetris/build/orchestration-ninja/CMakeFiles/test.dir
+C:/agents/Tetris/build/orchestration-ninja/CMakeFiles/edit_cache.dir
+C:/agents/Tetris/build/orchestration-ninja/CMakeFiles/rebuild_cache.dir

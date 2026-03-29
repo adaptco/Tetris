@@ -66,6 +66,25 @@ This exposes the live game controls as MCP tools:
 - `advance_gravity`
 - `restart_tetris_game`
 
+## Orchestration Runtime
+
+This repo now also includes a production-oriented orchestration layer for agent workflows:
+
+- C++ runtime generator: `orchestration_agent_cli`
+- Python flow index library: `agent_flow_tools`
+- MCP server for the generated bundle: `orchestration_mcp_server.py`
+- Runtime scripts: `scripts/build_orchestration_agent.sh`, `scripts/generate_orchestration_bundle.sh`, `scripts/release_orchestration_bundle.sh`
+- GitHub packaging workflow: `.github/workflows/orchestration-agent-release.yml`
+
+The generated bundle lives in `runtime/orchestration` and describes four default sub-agents:
+
+- `architecture-agent`
+- `implementation-agent`
+- `qa-agent`
+- `release-agent`
+
+See [docs/orchestration_runtime.md](/C:/agents/Tetris/docs/orchestration_runtime.md) for the build, MCP, and GitHub artifact flow.
+
 ## 🏗️ Architecture
 
 ```text
@@ -359,17 +378,33 @@ def special_move(self, state):
 
 ## 🚢 Deployment
 
+### Required Environment Variables
+
+`web/tetris_api.py` now reads database settings from environment variables at startup.
+The server will fail fast with a clear error if `DATABASE_URL` is missing or invalid.
+
+- `DATABASE_URL` (**required**) - PostgreSQL DSN used by `asyncpg`
+- `DB_POOL_SIZE` (optional, default: `10`) - max asyncpg pool size
+- `DB_SSL_MODE` (optional) - one of `disable`, `prefer`, `require`
+
 ### Local Development
 
 ```bash
+export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/event_store"
+export DB_POOL_SIZE="5"
+export DB_SSL_MODE="disable"
 python web/tetris_api.py
 ```
 
-### Docker
+### Docker / Dev Container
 
 ```bash
 docker build -t tetris-event-store .
-docker run -p 8001:8001 tetris-event-store
+docker run -p 8001:8001 \
+  -e DATABASE_URL="postgresql://postgres:postgres@host.docker.internal:5432/event_store" \
+  -e DB_POOL_SIZE="10" \
+  -e DB_SSL_MODE="prefer" \
+  tetris-event-store
 ```
 
 ### Production (AWS)
@@ -378,6 +413,14 @@ docker run -p 8001:8001 tetris-event-store
 - Same RDS instance
 - Same ECS cluster
 - Add load balancer for multiple instances
+
+Example production values:
+
+```bash
+export DATABASE_URL="postgresql://app_user:${DB_PASSWORD}@prod-rds.cluster-xxxx.us-east-1.rds.amazonaws.com:5432/event_store"
+export DB_POOL_SIZE="30"
+export DB_SSL_MODE="require"
+```
 
 ## 🎓 What We Learned
 
