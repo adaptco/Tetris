@@ -1,0 +1,1 @@
+"""Tetris web application package."""
