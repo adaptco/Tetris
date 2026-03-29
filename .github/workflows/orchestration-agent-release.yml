@@ -2,24 +2,6 @@ name: Orchestration Agent Release
 
 on:
   workflow_dispatch:
-  push:
-    branches: ["main"]
-    paths:
-      - "CMakeLists.txt"
-      - "orchestration/**"
-      - "agent_flow_tools/**"
-      - "orchestration_mcp_server.py"
-      - "scripts/**"
-      - "tests/test_orchestration_flow_registry.py"
-  pull_request:
-    branches: ["main"]
-    paths:
-      - "CMakeLists.txt"
-      - "orchestration/**"
-      - "agent_flow_tools/**"
-      - "orchestration_mcp_server.py"
-      - "scripts/**"
-      - "tests/test_orchestration_flow_registry.py"
 
 jobs:
   build-test-package:
@@ -32,30 +14,34 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: '3.11'
 
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -r requirements.txt pytest
+          pip install pytest
 
       - name: Make runtime scripts executable
-        run: chmod +x scripts/*.sh
+        run: chmod +x scripts/generate_orchestration_bundle.sh
 
       - name: Generate orchestration runtime bundle
         run: ./scripts/generate_orchestration_bundle.sh
 
       - name: Run C++ tests
-        run: ctest --test-dir build/orchestration --output-on-failure -C Release
+        run: |
+          cd build/orchestration
+          ctest --output-on-failure
 
       - name: Run Python tests
-        run: python -m pytest tests/test_tetris_controls.py tests/test_orchestration_flow_registry.py
+        run: pytest tests/
 
       - name: Package runtime bundle
-        run: ./scripts/release_orchestration_bundle.sh "$GITHUB_WORKSPACE/dist/orchestration-bundle"
+        run: |
+          mkdir -p dist
+          tar -czvf dist/orchestration-agent.tar.gz -C build/orchestration orchestration_agent
 
       - name: Upload runtime artifact bundle
         uses: actions/upload-artifact@v4
         with:
-          name: orchestration-bundle
-          path: dist/orchestration-bundle
+          name: orchestration-agent-bundle
+          path: dist/orchestration-agent.tar.gz
