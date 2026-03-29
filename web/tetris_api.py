@@ -20,6 +20,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from event_store_postgres import PostgresEventStore, initialize_schema
 from agents.tetris_agent import TetrisAgent, TetrisExecution
 from game.tetris_engine import TetrisAction
+from web.config import load_settings
 
 
 # =============================================================================
@@ -71,16 +72,24 @@ app = FastAPI(
 async def startup():
     """Initialize database connection"""
     global event_store
-    
+
+    settings = load_settings()
+
     pool = await asyncpg.create_pool(
-        "postgresql://postgres:postgres@localhost:5432/event_store"
+        dsn=settings.database_url,
+        min_size=1,
+        max_size=settings.db_pool_size,
+        ssl=settings.asyncpg_ssl,
     )
-    
+
     # Initialize schema
     await initialize_schema(pool)
-    
+
     event_store = PostgresEventStore(pool)
-    print("🎮 Tetris Event Store started")
+    print(
+        "🎮 Tetris Event Store started "
+        f"(pool={settings.db_pool_size}, ssl={settings.db_ssl_mode or 'default'})"
+    )
 
 
 @app.on_event("shutdown")
