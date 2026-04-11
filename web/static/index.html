@@ -3,18 +3,118 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Standalone Tetris</title>
+  <meta name="theme-color" content="#0f1728">
+  <title>Tetris SDK Shell</title>
   <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
   <main class="app-shell">
-    <div class="canvas-frame">
-      <canvas id="game-canvas" width="960" height="640" aria-label="Standalone Tetris playfield"></canvas>
-    </div>
-    <div class="controls-row">
-      <button id="start-btn" type="button">Start Game</button>
-      <button id="restart-btn" type="button" disabled>Restart Run</button>
-    </div>
+    <section class="hero-strip">
+      <div class="hero-copy">
+        <p class="eyebrow" id="plugin-badge">Loading Game Design Agent plug-in...</p>
+        <h1 id="shell-title">Tetris SDK Shell</h1>
+        <p class="hero-text" id="shell-subtitle">
+          Booting a responsive shell around the Python kernel, MCP surface, and plug-in manifest.
+        </p>
+      </div>
+      <div class="hero-actions">
+        <button id="start-btn" type="button">Start Run</button>
+        <button id="restart-btn" type="button" disabled>Restart Run</button>
+      </div>
+    </section>
+
+    <section class="experience-grid">
+      <section class="play-column">
+        <div class="status-chip" id="status-chip" data-tone="neutral">
+          Preparing the shell...
+        </div>
+        <div class="canvas-frame">
+          <canvas id="game-canvas" width="420" height="620" aria-label="Tetris playfield"></canvas>
+        </div>
+      </section>
+
+      <aside class="hud-panel">
+        <section class="panel-section">
+          <div class="section-heading">
+            <h2>Run Stats</h2>
+            <span class="pill" id="platform-pill">Desktop + Mobile</span>
+          </div>
+          <div class="stats-grid">
+            <article class="stat-card">
+              <span class="stat-label">Score</span>
+              <strong class="stat-value" id="stat-score">0</strong>
+            </article>
+            <article class="stat-card">
+              <span class="stat-label">Level</span>
+              <strong class="stat-value" id="stat-level">1</strong>
+            </article>
+            <article class="stat-card">
+              <span class="stat-label">Lines</span>
+              <strong class="stat-value" id="stat-lines">0</strong>
+            </article>
+            <article class="stat-card">
+              <span class="stat-label">Moves</span>
+              <strong class="stat-value" id="stat-moves">0</strong>
+            </article>
+            <article class="stat-card">
+              <span class="stat-label">Gravity</span>
+              <strong class="stat-value" id="stat-gravity">800 ms</strong>
+            </article>
+            <article class="stat-card">
+              <span class="stat-label">Piece</span>
+              <strong class="stat-value" id="stat-piece">-</strong>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel-section">
+          <div class="section-heading">
+            <h2>Next Queue</h2>
+            <span class="pill" id="renderer-pill">Canvas shell</span>
+          </div>
+          <div class="queue-list" id="queue-list"></div>
+        </section>
+
+        <section class="panel-section">
+          <h2>Controls</h2>
+          <ul class="control-list" id="control-list"></ul>
+        </section>
+
+        <section class="panel-section">
+          <h2>Touch Deck</h2>
+          <div class="touch-grid">
+            <button class="touch-control" type="button" data-action="MOVE_LEFT">Left</button>
+            <button class="touch-control" type="button" data-action="ROTATE_CCW">Back</button>
+            <button class="touch-control" type="button" data-action="ROTATE_CW">Rotate</button>
+            <button class="touch-control" type="button" data-action="MOVE_RIGHT">Right</button>
+            <button class="touch-control" type="button" data-action="MOVE_DOWN">Soft Drop</button>
+            <button class="touch-control accent" type="button" data-action="HARD_DROP">Hard Drop</button>
+          </div>
+        </section>
+
+        <section class="panel-section">
+          <h2>Assembly</h2>
+          <dl class="assembly-grid">
+            <div>
+              <dt>Plugin</dt>
+              <dd id="assembly-plugin">Tetris</dd>
+            </div>
+            <div>
+              <dt>Renderer</dt>
+              <dd id="assembly-renderer">html-canvas-shell</dd>
+            </div>
+            <div>
+              <dt>MCP Tools</dt>
+              <dd id="assembly-mcp-tools">0</dd>
+            </div>
+            <div>
+              <dt>Route</dt>
+              <dd id="assembly-route">/</dd>
+            </div>
+          </dl>
+        </section>
+      </aside>
+    </section>
   </main>
   <script src="/static/app.js" defer></script>
 </body>

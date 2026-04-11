@@ -25,6 +25,23 @@ class TetrisApiClient:
     def start_game(self, player_id: str = "player-one", seed: Optional[int] = None) -> Dict[str, Any]:
         return self._request("POST", "/api/game/start", {"player_id": player_id, "seed": seed})
 
+    def list_plugins(self) -> Dict[str, Any]:
+        return self._request("GET", "/api/sdk/plugins")
+
+    def get_plugin_manifest(self, plugin_id: str = "tetris") -> Dict[str, Any]:
+        return self._request("GET", f"/api/sdk/plugins/{plugin_id}")
+
+    def get_web_assembly(self, plugin_id: str = "tetris") -> Dict[str, Any]:
+        return self._request("GET", f"/api/sdk/plugins/{plugin_id}/assembly")
+
+    def launch_plugin(
+        self,
+        plugin_id: str = "tetris",
+        player_id: str = "player-one",
+        seed: Optional[int] = None,
+    ) -> Dict[str, Any]:
+        return self._request("POST", f"/api/sdk/plugins/{plugin_id}/launch", {"player_id": player_id, "seed": seed})
+
     def get_state(self, game_id: str) -> Dict[str, Any]:
         return self._request("GET", f"/api/game/{game_id}")
 

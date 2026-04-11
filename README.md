@@ -44,6 +44,7 @@ Open browser: **[http://localhost:8001](http://localhost:8001)**
 - Arrow Keys: Move/Rotate
 - Space: Hard Drop
 - Z/X: Rotate
+- Touch Deck: Mobile-friendly on-screen controls
 
 ### 3. Optional: expose controls over MCP
 
@@ -65,6 +66,24 @@ This exposes the live game controls as MCP tools:
 - `hard_drop`
 - `advance_gravity`
 - `restart_tetris_game`
+
+## SDK Plug-In Surface
+
+Tetris is also exposed as a Game Design Agent plug-in so the same backend kernel can be launched through an SDK-style manifest, a responsive web shell, and MCP tools.
+
+### Plug-In Endpoints
+
+- `GET /api/sdk/plugins`
+- `GET /api/sdk/plugins/tetris`
+- `GET /api/sdk/plugins/tetris/assembly`
+- `POST /api/sdk/plugins/tetris/launch`
+
+### What The Assembly Includes
+
+- Python kernel entrypoint: `game.tetris_engine:TetrisGame`
+- Responsive HTML canvas shell with DOM HUD and touch controls
+- MCP server metadata for the Tetris tool surface
+- Desktop and mobile target declarations for the Game Design Agent API
 
 ## 🏗️ Architecture
 
@@ -220,6 +239,10 @@ tetris-event-store/
 │   └── __init__.py
 ├── agents/
 │   ├── tetris_agent.py             # ReAct loop with event store
+│   └── __init__.py
+├── game_design_sdk/
+│   ├── plugin_api.py              # Game Design Agent plug-in manifest + assembly types
+│   ├── tetris_plugin.py           # SDK import surface for Tetris
 │   └── __init__.py
 ├── web/
 │   ├── tetris_api.py               # FastAPI server + UI

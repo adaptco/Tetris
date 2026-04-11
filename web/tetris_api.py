@@ -18,6 +18,7 @@ ROOT_DIR = Path(__file__).resolve().parents[1]
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
+from game_design_sdk import GameDesignAgentAPI, TetrisPlugin
 from game.tetris_engine import TetrisAction
 from tetris_session_manager import TetrisSessionManager
 
@@ -34,6 +35,7 @@ app = FastAPI(
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 manager = TetrisSessionManager()
+game_design_api = GameDesignAgentAPI([TetrisPlugin(manager)])
 
 
 class StartGameRequest(BaseModel):
@@ -53,6 +55,11 @@ class GameAdvanceRequest(BaseModel):
 
 class GameRestartRequest(BaseModel):
     game_id: str
+    seed: Optional[int] = None
+
+
+class PluginLaunchRequest(BaseModel):
+    player_id: str = "player-one"
     seed: Optional[int] = None
 
 
@@ -85,6 +92,36 @@ async def root() -> FileResponse:
 @app.get("/health")
 async def health() -> Dict[str, str]:
     return {"status": "healthy", "service": "standalone-tetris"}
+
+
+@app.get("/api/sdk/plugins")
+async def list_game_plugins() -> Dict[str, object]:
+    plugins = game_design_api.list_plugins()
+    return {"plugins": plugins, "count": len(plugins)}
+
+
+@app.get("/api/sdk/plugins/{plugin_id}")
+async def get_game_plugin(plugin_id: str) -> Dict[str, object]:
+    try:
+        return game_design_api.get_manifest(plugin_id)
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail="Plugin not found") from exc
+
+
+@app.get("/api/sdk/plugins/{plugin_id}/assembly")
+async def get_game_plugin_assembly(plugin_id: str) -> Dict[str, object]:
+    try:
+        return game_design_api.build_web_assembly(plugin_id)
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail="Plugin not found") from exc
+
+
+@app.post("/api/sdk/plugins/{plugin_id}/launch", response_model=GameStateResponse)
+async def launch_game_plugin(plugin_id: str, request: PluginLaunchRequest) -> Dict[str, object]:
+    try:
+        return game_design_api.launch(plugin_id, player_id=request.player_id, seed=request.seed)
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail="Plugin not found") from exc
 
 
 @app.post("/api/game/start", response_model=GameStateResponse)
