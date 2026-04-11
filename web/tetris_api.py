@@ -7,6 +7,16 @@ from __future__ import annotations
 from pathlib import Path
 import sys
 from typing import Dict, List, Optional
+from web.config import load_settings
+=======
+from web.config import load_settings
+theirs
+
+=======
+from web.config import load_settings
+theirs
+
+=======
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
@@ -23,6 +33,7 @@ from game.tetris_engine import TetrisAction
 from tetris_session_manager import TetrisSessionManager
 
 
+main
 BASE_DIR = Path(__file__).resolve().parent
 STATIC_DIR = BASE_DIR / "static"
 
@@ -93,6 +104,51 @@ async def root() -> FileResponse:
 async def health() -> Dict[str, str]:
     return {"status": "healthy", "service": "standalone-tetris"}
 
+@app.on_event("startup")
+async def startup():
+    """Initialize database connection"""
+    global event_store
+
+    settings = load_settings()
+
+    pool = await asyncpg.create_pool(
+        dsn=settings.database_url,
+        min_size=1,
+        max_size=settings.db_pool_size,
+        ssl=settings.asyncpg_ssl,
+    )
+
+    # Initialize schema
+    await initialize_schema(pool)
+
+    event_store = PostgresEventStore(pool)
+    print(
+        "🎮 Tetris Event Store started "
+        f"(pool={settings.db_pool_size}, ssl={settings.db_ssl_mode or 'default'})"
+    )
+
+theirs
+
+    event_store = PostgresEventStore(pool)
+    print(
+        "🎮 Tetris Event Store started "
+        f"(pool={settings.db_pool_size}, ssl={settings.db_ssl_mode or 'default'})"
+    )
+theirs
+
+@app.post("/api/game/start", response_model=GameStateResponse)
+async def start_game(request: StartGameRequest) -> Dict[str, object]:
+    return manager.start_game(player_id=request.player_id, seed=request.seed)
+
+
+@app.get("/api/game/{game_id}", response_model=GameStateResponse)
+async def get_game(game_id: str) -> Dict[str, object]:
+    try:
+        return manager.get_state(game_id)
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail="Game not found") from exc
+
+=======
 
 @app.get("/api/sdk/plugins")
 async def list_game_plugins() -> Dict[str, object]:
@@ -148,7 +204,14 @@ async def game_action(request: GameActionRequest) -> Dict[str, object]:
         return manager.apply_action(game_id=request.game_id, action_name=request.action)
     except KeyError as exc:
         raise HTTPException(status_code=404, detail="Game not found") from exc
+main
 
+@app.post("/api/game/action", response_model=GameStateResponse)
+async def game_action(request: GameActionRequest) -> Dict[str, object]:
+    try:
+        TetrisAction(request.action)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=f"Invalid action: {request.action}") from exc
 
 @app.post("/api/game/advance", response_model=GameStateResponse)
 async def advance_game(request: GameAdvanceRequest) -> Dict[str, object]:

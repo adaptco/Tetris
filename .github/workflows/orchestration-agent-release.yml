@@ -1,0 +1,56 @@
+name: Orchestration Agent Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-test-package:
+    runs-on: ubuntu-latest
+    env:
+      # Opt-in to Node 24 to clear the deprecation warnings in your current logs
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake build-essential
+
+      - name: Build Orchestration Agent
+        run: |
+          # Create the specific nested build directory seen in your logs
+          mkdir -p build/orchestration
+          cd build/orchestration
+          # Pointing to the root where the main CMakeLists.txt lives
+          cmake ../.. 
+          make -j$(nproc)
+
+      - name: Run C++ tests
+        run: |
+          cd build/orchestration
+          ctest --output-on-failure
+
+      - name: Run Python tests
+        run: |
+          python -m pip install pytest
+          pytest tests/
+
+      - name: Package and Upload
+        run: |
+          mkdir -p dist
+          # The binary is generated inside the nested build folder
+          tar -czvf dist/orchestration-agent.tar.gz -C build/orchestration orchestration_agent
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: orchestration-agent-bundle
+          path: dist/orchestration-agent.tar.gz

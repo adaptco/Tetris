@@ -67,23 +67,24 @@ This exposes the live game controls as MCP tools:
 - `advance_gravity`
 - `restart_tetris_game`
 
-## SDK Plug-In Surface
+## Orchestration Runtime
 
-Tetris is also exposed as a Game Design Agent plug-in so the same backend kernel can be launched through an SDK-style manifest, a responsive web shell, and MCP tools.
+This repo now also includes a production-oriented orchestration layer for agent workflows:
 
-### Plug-In Endpoints
+- C++ runtime generator: `orchestration_agent_cli`
+- Python flow index library: `agent_flow_tools`
+- MCP server for the generated bundle: `orchestration_mcp_server.py`
+- Runtime scripts: `scripts/build_orchestration_agent.sh`, `scripts/generate_orchestration_bundle.sh`, `scripts/release_orchestration_bundle.sh`
+- GitHub packaging workflow: `.github/workflows/orchestration-agent-release.yml`
 
-- `GET /api/sdk/plugins`
-- `GET /api/sdk/plugins/tetris`
-- `GET /api/sdk/plugins/tetris/assembly`
-- `POST /api/sdk/plugins/tetris/launch`
+The generated bundle lives in `runtime/orchestration` and describes four default sub-agents:
 
-### What The Assembly Includes
+- `architecture-agent`
+- `implementation-agent`
+- `qa-agent`
+- `release-agent`
 
-- Python kernel entrypoint: `game.tetris_engine:TetrisGame`
-- Responsive HTML canvas shell with DOM HUD and touch controls
-- MCP server metadata for the Tetris tool surface
-- Desktop and mobile target declarations for the Game Design Agent API
+See [docs/orchestration_runtime.md](docs/orchestration_runtime.md) for the build, MCP, and GitHub artifact flow.
 
 ## 🏗️ Architecture
 
