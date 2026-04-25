@@ -13,6 +13,21 @@ class LocalAppClient:
     def health(self):
         return self._client.get("/health").json()
 
+    def list_plugins(self):
+        return self._client.get("/api/sdk/plugins").json()
+
+    def get_plugin_manifest(self, plugin_id="tetris"):
+        return self._client.get(f"/api/sdk/plugins/{plugin_id}").json()
+
+    def get_web_assembly(self, plugin_id="tetris"):
+        return self._client.get(f"/api/sdk/plugins/{plugin_id}/assembly").json()
+
+    def launch_plugin(self, plugin_id="tetris", player_id="player-one", seed=None):
+        return self._client.post(
+            f"/api/sdk/plugins/{plugin_id}/launch",
+            json={"player_id": player_id, "seed": seed},
+        ).json()
+
     def start_game(self, player_id="player-one", seed=None):
         return self._client.post("/api/game/start", json={"player_id": player_id, "seed": seed}).json()
 
@@ -46,6 +61,12 @@ def test_web_api_starts_a_playable_game():
 def test_mcp_tools_drive_the_game(monkeypatch):
     web_client = TestClient(app)
     monkeypatch.setattr(tetris_mcp_server, "client", LocalAppClient(web_client))
+
+    manifest = tetris_mcp_server.get_tetris_plugin_manifest()
+    assert manifest["plugin_id"] == "tetris"
+
+    assembly = tetris_mcp_server.get_tetris_web_assembly()
+    assert assembly["assembly"]["touch_controls"] is True
 
     started = tetris_mcp_server.start_tetris_game(player_id="mcp-test", seed=11)
     assert started["player_id"] == "mcp-test"

@@ -44,6 +44,7 @@ Open browser: **[http://localhost:8001](http://localhost:8001)**
 - Arrow Keys: Move/Rotate
 - Space: Hard Drop
 - Z/X: Rotate
+- Touch Deck: Mobile-friendly on-screen controls
 
 ### 3. Optional: expose controls over MCP
 
@@ -239,6 +240,10 @@ tetris-event-store/
 │   └── __init__.py
 ├── agents/
 │   ├── tetris_agent.py             # ReAct loop with event store
+│   └── __init__.py
+├── game_design_sdk/
+│   ├── plugin_api.py              # Game Design Agent plug-in manifest + assembly types
+│   ├── tetris_plugin.py           # SDK import surface for Tetris
 │   └── __init__.py
 ├── web/
 │   ├── tetris_api.py               # FastAPI server + UI

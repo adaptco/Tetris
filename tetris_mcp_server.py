@@ -45,9 +45,27 @@ def tetris_health() -> Dict[str, Any]:
     return client.health()
 
 
+@mcp.tool(
+    name="get_tetris_plugin_manifest",
+    description="Fetch the SDK plugin manifest that exposes Tetris to the Game Design Agent API.",
+    structured_output=True,
+)
+def get_tetris_plugin_manifest() -> Dict[str, Any]:
+    return client.get_plugin_manifest("tetris")
+
+
+@mcp.tool(
+    name="get_tetris_web_assembly",
+    description="Fetch the assembled web-shell metadata for desktop and mobile Tetris play.",
+    structured_output=True,
+)
+def get_tetris_web_assembly() -> Dict[str, Any]:
+    return client.get_web_assembly("tetris")
+
+
 @mcp.tool(name="start_tetris_game", description="Start a new Tetris session in the running web app.", structured_output=True)
 def start_tetris_game(player_id: str = "player-one", seed: Optional[int] = None) -> Dict[str, Any]:
-    return summarize_state(client.start_game(player_id=player_id, seed=seed))
+    return summarize_state(client.launch_plugin("tetris", player_id=player_id, seed=seed))
 
 
 @mcp.tool(name="get_tetris_state", description="Fetch the current board and score for a game.", structured_output=True)
