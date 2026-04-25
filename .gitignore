@@ -1,0 +1,24 @@
+# Python bytecode & compiled
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+
+# Virtual environments
+.venv/
+
+# Test & coverage artifacts
+.coverage
+htmlcov/
+.pytest_cache/
+
+# IDE
+.vscode/
+.idea/
+
+# Environment / secrets
+.env
+
+# OS noise
+.DS_Store
+Thumbs.db
